@@ -39,7 +39,7 @@ async def delete_resource(resource_type: str, file_id: str) -> int:
     core = implementation.get_core_name(resource_type)
     if not core:
         return INTERNAL_ERROR_STATUS_CODE
-    delete_query = f"fileID:{file_id}"
+    delete_query = f"id:{file_id}"
     delete_cmd = {"delete": {"query": delete_query}}
     async with httpx.AsyncClient(timeout=60) as client:
         response = await client.post(

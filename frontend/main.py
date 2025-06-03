@@ -8,9 +8,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from frontend.lib.utils import *
 
 origins = [
-    "http://localhost:5173",
-    "https://epsilon-editorial.epsilon.ac.uk",
-    "https://editorial.epsilon.ac.uk"
+    "https://casebooks-production.casebooks.lib.cam.ac.uk",
+    "https://casebooks.lib.cam.ac.uk"
 ]
 
 app = FastAPI()
@@ -35,11 +34,11 @@ async def get_items(
 async def update_item(request: Request):
     data = await request.body()
     json_dict = json.loads(data)
-    if json_dict.get("facet-document-type") in ["letter", "bibliography", "people", "repository", "documentation", "site"]:
-        logger.info(f"Indexing {json_dict.get('fileID')}")
+    if json_dict.get("facet-document-type"):
+        logger.info(f"Indexing {json_dict.get('id')}")
         status_code = await put_item("item", data, {"f": ["$FQN:/**", "/*"]})
     else:
-        logger.error(f"Invalid item JSON for fileID: {json_dict.get('fileID')}")
+        logger.error(f"Invalid item JSON for id: {json_dict.get('id')}")
         status_code = INTERNAL_ERROR_STATUS_CODE
     return status_code
 
