@@ -2,8 +2,6 @@
 
 The Casebooks Search API is based on [CUDL Search](https://github.com/cambridge-collection/cudl-search).
 
-For the Epsilon Editorial release, use the `epsilon-editorial` branch; the `main` branch contains the original CUDL Search code.
-
 ## Prerequisites
 
 - **Docker:** Make sure Docker is installed.
