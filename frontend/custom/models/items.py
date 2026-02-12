@@ -142,9 +142,10 @@ class ItemsQueryParams(CoreModel.CoreQueryParams):
         # Pattern matches keys starting with 'f', followed by digits, and then one or more hyphen-separated alphanumeric segments.
         facet_pattern = re.compile(r"^f[0-9]+((-[a-zA-Z0-9]+)+)$")
         defined_fields = set(cls.model_fields.keys())
+        defined_aliases = {field.alias for field in cls.model_fields.values() if field.alias}
         #print(f"DUMP {values}")
         for key in list(values.keys()):
-            if key not in defined_fields:
+            if key not in defined_fields and key not in defined_aliases:
                 match = facet_pattern.match(key)
                 if match:
                     facet_value = values.pop(key)
