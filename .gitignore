@@ -13,17 +13,10 @@ venv/
 .env
 .env.*
 
-# VCS / IDE
-.git/
-.gitignore
+# IDE
 .idea/
 .vscode/
 
 # OS artefacts
 .DS_Store
 Thumbs.db
-
-# Docker
-.dockerignore
-Dockerfile
-docker-compose.yml
