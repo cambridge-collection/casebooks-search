@@ -20,3 +20,6 @@ venv/
 # OS artefacts
 .DS_Store
 Thumbs.db
+
+# Logs
+*.log
