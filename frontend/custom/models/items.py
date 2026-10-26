@@ -335,7 +335,7 @@ class ItemsQueryParams(CoreModel.CoreQueryParams):
         if not solr_params.get('sort'):
             solr_params['sort']= "score desc"
         solr_params["q"] = final_q if final_q not in ["['*']", "['']"] else "*"
-        solr_params["fq"] = fq
+        solr_params["fq"] = list(dict.fromkeys(fq))
         solr_params = {**solr_params, **filters, **expand_clauses}
         #print(solr_params)
         return solr_params

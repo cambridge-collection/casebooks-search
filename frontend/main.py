@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 from typing import Optional, Annotated
 
-from fastapi import FastAPI, Query, Request
+from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
@@ -45,8 +45,9 @@ async def update_item(request: Request):
         logger.info(f"Indexing {json_dict.get('id')}")
         status_code = await put_item("item", data, {"f": ["$FQN:/**", "/*"]})
     else:
-        logger.error(f"Invalid item JSON for id: {json_dict.get('id')}")
-        status_code = INTERNAL_ERROR_STATUS_CODE
+        detail = f"Invalid item JSON for id: {json_dict.get('id')}"
+        logger.error(detail)
+        raise HTTPException(status_code=400, detail=detail)
     return status_code
 
 
