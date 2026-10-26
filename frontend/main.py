@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 import json
+from pathlib import Path
 from typing import Optional, Annotated
 
 from fastapi import FastAPI, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 
 from frontend.lib.utils import *
 
 origins = [
     "https://casebooks-production.casebooks.lib.cam.ac.uk",
-    "https://casebooks.lib.cam.ac.uk"
+    "https://casebooks.lib.cam.ac.uk",
 ]
 
 app = FastAPI()
@@ -22,6 +24,11 @@ app.add_middleware(
 )
 
 app.include_router(implementation.router)
+
+
+@app.get("/robots.txt", include_in_schema=False)
+async def robots():
+    return FileResponse(Path(__file__).parent / "robots.txt")
 
 
 @app.get("/items")

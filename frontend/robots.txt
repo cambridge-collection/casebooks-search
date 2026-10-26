@@ -1,0 +1,94 @@
+#
+# robots.txt for https://casebooks-search.casebooks.lib.cam.ac.uk
+#
+# This file is only honoured at the root of the host:
+# Used:    https://casebooks-search.casebooks.lib.cam.ac.uk/robots.txt
+# Ignored: https://casebooks-search.casebooks.lib.cam.ac.uk/items/robots.txt
+#
+# For more information about the robots.txt standard, see:
+# https://www.robotstxt.org/robotstxt.html
+
+User-agent: PetalBot
+Disallow: /
+
+# a crawler obeys only the most specific group naming it and skips *, so each
+# named group must repeat every rule it should follow
+User-agent: Baiduspider
+Disallow: /items
+
+User-agent: GPTBot
+Disallow: /items
+
+User-agent: OAI-SearchBot
+Disallow: /items
+
+User-agent: ChatGPT-User
+Disallow: /items
+
+User-agent: ClaudeBot
+Disallow: /items
+
+User-agent: Claude-SearchBot
+Disallow: /items
+
+User-agent: Claude-User
+Disallow: /items
+
+User-agent: PerplexityBot
+Disallow: /items
+
+User-agent: Perplexity-User
+Disallow: /items
+
+User-agent: CCBot
+Disallow: /items
+
+User-agent: Bytespider
+Disallow: /items
+
+User-agent: Amazonbot
+Disallow: /items
+
+User-agent: Applebot
+Disallow: /items
+
+User-agent: meta-externalagent
+Disallow: /items
+
+User-agent: meta-externalfetcher
+Disallow: /items
+
+User-agent: FacebookBot
+Disallow: /items
+
+User-agent: cohere-ai
+Disallow: /items
+
+User-agent: cohere-training-data-crawler
+Disallow: /items
+
+User-agent: Diffbot
+Disallow: /items
+
+User-agent: AI2Bot
+Disallow: /items
+
+User-agent: DuckAssistBot
+Disallow: /items
+
+User-agent: MistralAI-User
+Disallow: /items
+
+User-agent: PanguBot
+Disallow: /items
+
+User-agent: YouBot
+Disallow: /items
+
+User-agent: Timpibot
+Disallow: /items
+
+User-agent: *
+# items is the search API behind the viewer's client-side results, and every
+# parameter combination is a distinct URL, so crawling it yields JSON without limit
+Disallow: /items
