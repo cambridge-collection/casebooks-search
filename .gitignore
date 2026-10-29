@@ -12,6 +12,7 @@ venv/
 # Secrets / local env
 .env
 .env.*
+*.env.make
 
 # IDE
 .idea/
