@@ -32,7 +32,7 @@ class CoreQueryParams(BaseModel):
 
     @field_validator("rows")
     def validate_rows(cls, value):
-        return DEFAULT_ROWS if value not in (10, 20) else value
+        return DEFAULT_ROWS if value not in (0, 10, 20) else value
 
     @field_validator("page", mode="before")
     def take_first_page(cls, value):
