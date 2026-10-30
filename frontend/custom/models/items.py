@@ -11,6 +11,20 @@ from frontend.custom.config import DEFAULT_ROWS, facet_query, facets
 
 router = APIRouter()
 
+
+# Level 0 and prefixes-1 are always appended in solrconfig.xml
+def facet_fields(selected_levels: Dict[str, int]) -> List[str]:
+    fields = []
+    for name, level in selected_levels.items():
+        field_name = facets[name]["field"]
+        max_depth = facets[name]["max_depth"]
+        fields += [f"{{!ex=dt key={name}-{i}}}{field_name}-{i}"
+                   for i in range(1, min(level + 1, max_depth) + 1)]
+        fields += [f"{{!ex=dt key={name}-prefixes-{i}}}{field_name}-prefixes-{i}"
+                   for i in range(2, min(level + 2, max_depth) + 1)]
+    return fields
+
+
 class ItemsQueryParams(CoreModel.CoreQueryParams):
     model_config = ConfigDict(populate_by_name=True, extra="allow")
 
@@ -165,7 +179,7 @@ class ItemsQueryParams(CoreModel.CoreQueryParams):
 
     @field_validator("rows", mode="after")
     def validate_rows_items(cls, value):
-        return DEFAULT_ROWS if value not in (10, 20) else value
+        return DEFAULT_ROWS if value not in (0, 10, 20) else value
 
     def is_facet(self, key: str, value: Any) -> bool:
         return re.match(r"^f[0-9]+-.+?$", key) is not None
@@ -222,7 +236,7 @@ class ItemsQueryParams(CoreModel.CoreQueryParams):
         set_params = url_params
         q = []
         fq = []
-        filters = {}
+        selected_levels: Dict[str, int] = {}
         expand_clauses = {}
 
         # Remove exclusionary boolean params that only make sense in the affirmative.
@@ -296,17 +310,13 @@ class ItemsQueryParams(CoreModel.CoreQueryParams):
                     q.append(f'({utils.stringify(value)})')
                 elif re.match(r"^f[0-9]+-.+?$", name) and facets.get(name, {}).get("nested") is True:
                     field_name = facets.get(name).get("field")
+                    max_depth = facets.get(name).get("max_depth")
                     val_list = utils.listify(value)
-                    fields = [f"{field_name}-{i}" for i in range(facets.get(name, {}).get("max_depth") + 1)]
                     for val in sorted(val_list):
                         val_clean = re.sub(r'^"(.+?)"$', r'\1', val)
-                        val_parts = val_clean.split("::")
-                        num_parts = len(val_parts)
-                        solr_name = fields[min(num_parts - 1, len(fields) - 1)]
-                        for i in range(len(val_parts)+2):
-                            filters[f"f.{field_name}-{str(i)}.facet.contains"] = "::".join(val_parts[: i + 1])
-                            filters[f"f.{field_name}-{str(i)}.facet.limit"]=-1
-                        fq.append(f'{solr_name}:"{val_clean}"')
+                        level = min(len(val_clean.split("::")) - 1, max_depth)
+                        selected_levels[name] = max(selected_levels.get(name, -1), level)
+                        fq.append(f'{field_name}-{level}:"{val_clean}"')
                 elif re.match(r"^f[0-9]+-.+?$", name):
                     solr_name = re.sub(r"^f[0-9]+-(.+?)$", r"facet-\1", name)
                     for x in utils.listify(value):
@@ -336,6 +346,11 @@ class ItemsQueryParams(CoreModel.CoreQueryParams):
             solr_params['sort']= "score desc"
         solr_params["q"] = final_q if final_q not in ["['*']", "['']"] else "*"
         solr_params["fq"] = list(dict.fromkeys(fq))
-        solr_params = {**solr_params, **filters, **expand_clauses}
+        if selected_levels:
+            solr_params["facet.field"] = facet_fields(selected_levels)
+        # The viewer asks for facets alone when it expands a hierarchical facet value
+        if self.rows == 0:
+            solr_params["rows"] = 0
+        solr_params = {**solr_params, **expand_clauses}
         #print(solr_params)
         return solr_params
