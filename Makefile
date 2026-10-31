@@ -38,6 +38,9 @@ ifneq ($(filter login build push,$(MAKECMDGOALS)),)
 ifndef REGISTRY
 ifndef AWS_ACCOUNT_ID
 AWS_ACCOUNT_ID := $(shell $(AWS) sts get-caller-identity --query Account --output text 2>/dev/null)
+ifeq ($(AWS_ACCOUNT_ID),)
+$(error Could not look up AWS_ACCOUNT_ID with '$(AWS) sts get-caller-identity'; check your AWS credentials or set AWS_ACCOUNT_ID or REGISTRY)
+endif
 endif
 REGISTRY := $(AWS_ACCOUNT_ID).dkr.ecr.$(REGION).amazonaws.com
 endif

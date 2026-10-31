@@ -68,7 +68,7 @@ The API will be available on the port defined in `API_PORT`. For example:
 
 | Tag               | Example          | Purpose |
 |-------------------|------------------|---------|
-| `<branch>`        | `main` | Latest image built from that branch (`/` becomes `-`). Moves with each push. |
+| `<branch>`        | `main` | Latest image built from that branch (`/` becomes `-`). Moves with each push. Omitted on a detached `HEAD` unless you set `BRANCH`. |
 | `git_<short sha>` | `git_1a2b3c4`    | The commit the image was built from. |
 | `by_<user>`       | `by_an_other`      | Latest image pushed by that user, so teammates can see who pushed what. Moves with each push. |
 
